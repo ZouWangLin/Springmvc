@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    
+    <!-- 1.别名的定义(应该放在前面) -->
+	<typeAliases>
+	    <!-- 批量定义别名，定义一个包下所有的别名(别名为类名大小写) -->
+	    <package name="com.itheima.entity"/>
+	</typeAliases>
+	
+</configuration>

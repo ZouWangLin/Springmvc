@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+						http://cxf.apache.org/bindings/soap 
+						http://cxf.apache.org/schemas/configuration/soap.xsd
+						http://cxf.apache.org/jaxws 
+						http://cxf.apache.org/schemas/jaxws.xsd
+						">
+		
+    <!-- 1.加载(连接数据库属性的)配置文件 -->
+    <context:property-placeholder location="classpath:db.properties"/>
+    
+    <!-- 2.配置数据库连接池 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxActive" value="10" />
+		<property name="maxIdle" value="5" />
+	</bean>
+    
+    				
+    <!-- 3.创建sqlSessionFactory对象 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	    <!-- 加载配置文件 -->
+	    <property name="configLocation" value="classpath:SqlMapConfig.xml"></property>
+	    <!-- 注入dataSource -->
+	    <property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+
+	
+	<!-- 4.配置mapper代理 (新的开发模式)(方式二)，以包扫描的形式配置代理（企业中使用）-->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <!-- 配置map接口(只要写到对应的包下，这个时候就会扫描，当前包和其子包) -->
+	    <property name="basePackage" value="com.itheima.mapper"/>
+	    <!-- 这个时候，每个mapper代理对象的id就是类名，首字母小写 -->
+	</bean>
+	
+	
+	<!-- 5.配置事务 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	    <property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 如果不写transaction-manager默认找的就是id为transactionManager -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+</beans>
